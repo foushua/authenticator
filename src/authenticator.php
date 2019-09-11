@@ -156,6 +156,16 @@ class Authenticator
 		return $this->authenticated;
 	}
 
+    /**
+     * This function is used to return the authenticated user.
+     *
+     * @return null|object
+     */
+	public function user(): object
+    {
+        return (object) $this->session('user');
+    }
+
 	/**
 	 * This function is used to validate any value.
 	 *
