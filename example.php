@@ -1,23 +1,27 @@
 <?php
 
-	require_once __DIR__ . '/authenticator.php';
+    require_once __DIR__.'/authenticator.php';
 
-	$auth = new Authenticator('127.0.0.1', '', '', '');
-	if (isset($_POST['login'])) {
-		if (!$auth->isAuthenticated()) {
-		    $email = $auth->sanitize($_POST['email'], FILTER_SANITIZE_EMAIL); $password = $auth->sanitize($_POST['password']);
+    $auth = new Authenticator('127.0.0.1', '', '', '');
+    if (isset($_POST['login'])) {
+        if (!$auth->isAuthenticated()) {
+            $email = $auth->sanitize($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $password = $auth->sanitize($_POST['password']);
+
             try {
                 $auth->login($email, $password);
-			} catch (Exception $e) {
-			    $error = $e->getMessage();
-			}
-		}
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
+        }
     }
 
-	if (isset($_POST['register'])) {
-	    if (!$auth->isAuthenticated()) {
+    if (isset($_POST['register'])) {
+        if (!$auth->isAuthenticated()) {
             $email = $auth->sanitize($_POST['email'], FILTER_SANITIZE_EMAIL);
-            $password = $auth->sanitize($_POST['password']); $confirm = $auth->sanitize($_POST['password_confirm']);
+            $password = $auth->sanitize($_POST['password']);
+            $confirm = $auth->sanitize($_POST['password_confirm']);
+
             try {
                 if ($auth->register($email, $password, $confirm)) {
                     $auth->login($email, $password);
@@ -25,13 +29,13 @@
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
-	    }
+        }
     }
 
-	if (isset($_POST['disconnect'])) {
-	    if ($auth->isAuthenticated()) {
-	        if ($auth->logout()) {
-	            header("redirect: example.php");
+    if (isset($_POST['disconnect'])) {
+        if ($auth->isAuthenticated()) {
+            if ($auth->logout()) {
+                header('redirect: example.php');
             }
         }
     }
@@ -46,11 +50,11 @@
   </head>
   <body>
 
-    <?php if (isset($error) && !empty($error)): ?>
+    <?php if (isset($error) && !empty($error)) { ?>
 	    <span style="color: red;"><?= $error ?></span>
-    <?php endif; ?>
+    <?php } ?>
 
-    <?php if (!$auth->isAuthenticated()): ?>
+    <?php if (!$auth->isAuthenticated()) { ?>
         <h2>Login</h2>
         <form action="example.php" method="POST">
           <div>
@@ -85,9 +89,9 @@
             </div>
         </form>
 
-    <?php endif; ?>
+    <?php } ?>
 
-    <?php if ($auth->isAuthenticated()): ?>
+    <?php if ($auth->isAuthenticated()) { ?>
         <h1><?= $auth->user()->email; ?></h1>
         <a class="btn btn-sm btn-info" href="#logout" onclick="event.preventDefault(); document.getElementById('logout').submit();">
             Logout
@@ -95,7 +99,7 @@
                 <input type="hidden" name="disconnect" value="<?= $auth->user()->id; ?>">
             </form>
         </a>
-    <?php endif; ?>
+    <?php } ?>
 
   </body>
 </html>
